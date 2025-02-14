@@ -1,5 +1,7 @@
 package world.hello.product.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,8 +27,8 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public Product createProduct(ProductCreateDto productCreateDto) {
+    log.info("Creating product {}", productCreateDto);
     try {
-      log.info("Creating product {}", productCreateDto);
       final ProductModel product = productMapper.toModel(productCreateDto);
       log.info("Mapped to Model {}", product);
       final ProductModel created = productRepository.save(product);
@@ -36,6 +38,27 @@ public class ProductServiceImpl implements ProductService {
       log.error(ex.getMessage());
       throw new ResponseStatusException(
           HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create product", ex);
+    }
+  }
+
+  @Override
+  public List<Product> getAllProducts() {
+    log.info("Fetching all products");
+    try {
+      final List<ProductModel> products = productRepository.findAll();
+      log.info("Found products: {}", products);
+      if (products.size() < 1) {
+        log.info("No products in database yet");
+        return new ArrayList<Product>();
+      }
+      log.info("Attempting to map to dto");
+      final List<Product> mappedProducts = products.stream().map(productMapper::toDto).toList();
+      log.info("Mapped products: {}", mappedProducts);
+      return mappedProducts;
+    } catch (Exception ex) {
+      log.error(ex.getMessage());
+      throw new ResponseStatusException(
+          HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch all product", ex);
     }
   }
 }
