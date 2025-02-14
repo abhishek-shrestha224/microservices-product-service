@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import world.hello.product.domain.enums.Category;
 
 @Document(value = "product")
 @AllArgsConstructor
@@ -16,6 +17,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ProductModel {
   @Id private String id;
   private String name;
-  private String category;
+  private Category category;
   private BigDecimal price;
 }
