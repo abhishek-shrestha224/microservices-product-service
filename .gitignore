@@ -36,5 +36,8 @@ out/
 ### VS Code ###
 .vscode/
 
-###
-data/
+### Docker Host Volumes ###
+vol/
+
+### Environment Variables ###
+.env

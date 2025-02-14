@@ -9,7 +9,7 @@ services:
             MONGO_INITDB_ROOT_PASSWORD: changeinprod
             MONGO_INITDB_DATABASE: product_service
         volumes:
-            - mongodb_data:/data/db
+            - mongodb_product_data:/data/db
 
 volumes:
-    mongodb_data:
+    mongodb_product_data:
