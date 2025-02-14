@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,13 +26,15 @@ public class ProductController {
   }
 
   @PostMapping
-  public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductCreateDto createDto) {
+  @ResponseStatus(HttpStatus.CREATED)
+  public Product createProduct(@RequestBody @Valid ProductCreateDto createDto) {
     log.info("Product create data: {}", createDto);
     if (createDto.name().equals("abcd")) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are a teapot");
     }
     final Product created = productService.createProduct(createDto);
-    return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    log.info("Created product: {}", created);
+    return created;
   }
 
   @GetMapping
