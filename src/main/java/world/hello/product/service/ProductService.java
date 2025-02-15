@@ -7,5 +7,7 @@ import world.hello.product.domain.dto.ProductCreateDto;
 public interface ProductService {
   Product createProduct(ProductCreateDto productCreateDto);
 
-  List<Product> getAllProducts();
+  List<Product> fetchAllProducts();
+
+  Product fetchProductById(String id);
 }

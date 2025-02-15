@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 import world.hello.product.domain.dto.Product;
 import world.hello.product.domain.dto.ProductCreateDto;
 import world.hello.product.domain.model.ProductModel;
+import world.hello.product.exception.GenericException;
 import world.hello.product.repository.ProductRepository;
 import world.hello.product.service.ProductService;
 import world.hello.product.utils.ProductMapper;
@@ -42,7 +43,7 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public List<Product> getAllProducts() {
+  public List<Product> fetchAllProducts() {
     log.info("Fetching all products");
     try {
       final List<ProductModel> products = productRepository.findAll();
@@ -59,6 +60,36 @@ public class ProductServiceImpl implements ProductService {
       log.error(ex.getMessage());
       throw new ResponseStatusException(
           HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch all product", ex);
+    }
+  }
+
+  @Override
+  public Product fetchProductById(String id) {
+    try {
+      log.info("Find product with id: {}", id);
+
+      if (!id.matches("^[a-fA-F0-9]{24}$")) {
+        log.warn("Invalid Id, doesnot match MonngoDB object id constraint");
+        throw new GenericException(HttpStatus.BAD_REQUEST, "Invalid product ID format");
+      }
+
+      final ProductModel product =
+          productRepository
+              .findById(id)
+              .orElseThrow(
+                  () ->
+                      new GenericException(
+                          HttpStatus.NOT_FOUND, "Product with id " + id + " not found"));
+
+      log.info("Found Product: {}", product);
+      return productMapper.toDto(product);
+    } catch (GenericException ex) {
+      log.error(ex.getMessage());
+      throw new ResponseStatusException(ex.getExStatus(), ex.getMessage());
+    } catch (Exception ex) {
+      log.error(ex.getMessage());
+      throw new ResponseStatusException(
+          HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch product by id: " + id);
     }
   }
 }

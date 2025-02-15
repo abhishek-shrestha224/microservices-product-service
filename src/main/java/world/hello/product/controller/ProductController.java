@@ -41,7 +41,7 @@ public class ProductController {
   @ResponseStatus(HttpStatus.OK)
   public List<Product> getAllProducts() {
     log.info("GET /api/v1/products");
-    final List<Product> products = productService.getAllProducts();
+    final List<Product> products = productService.fetchAllProducts();
     log.info("Found products: {}", products);
     return products;
   }
