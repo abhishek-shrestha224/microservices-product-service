@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Product Microservice API Test",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

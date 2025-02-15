@@ -1,0 +1,19 @@
+meta {
+  name: create-new-product
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8081/api/v1/products
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "name": "Item 4",
+      "category": "MEN",
+      "price":123123
+  }
+}
