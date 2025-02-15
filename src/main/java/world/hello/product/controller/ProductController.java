@@ -29,13 +29,12 @@ public class ProductController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public Product createProduct(@RequestBody @Valid ProductData createDto) {
+    log.info("POST /api/v1/products");
     log.info("Product create data: {}", createDto);
     if (createDto.name().equals("abcd")) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are a teapot");
     }
-    final Product created = productService.createProduct(createDto);
-    log.info("Created product: {}", created);
-    return created;
+    return productService.createProduct(createDto);
   }
 
   @GetMapping
