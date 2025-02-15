@@ -2,7 +2,7 @@ package world.hello.product.utils.impl;
 
 import org.springframework.stereotype.Component;
 import world.hello.product.domain.dto.Product;
-import world.hello.product.domain.dto.ProductCreateDto;
+import world.hello.product.domain.dto.ProductData;
 import world.hello.product.domain.model.ProductModel;
 import world.hello.product.utils.ProductMapper;
 
@@ -29,7 +29,7 @@ public class ProductMapperImpl implements ProductMapper {
   }
 
   @Override
-  public ProductModel toModel(ProductCreateDto createDto) {
+  public ProductModel toModel(ProductData createDto) {
     return ProductModel.builder()
         .id(null)
         .name(createDto.name())

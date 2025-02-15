@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import world.hello.product.domain.dto.Product;
-import world.hello.product.domain.dto.ProductCreateDto;
+import world.hello.product.domain.dto.ProductData;
 import world.hello.product.domain.model.ProductModel;
 import world.hello.product.exception.GenericException;
 import world.hello.product.repository.ProductRepository;
@@ -27,7 +27,7 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public Product createProduct(ProductCreateDto productCreateDto) {
+  public Product createProduct(ProductData productCreateDto) {
     log.info("Creating product {}", productCreateDto);
     try {
       final ProductModel product = productMapper.toModel(productCreateDto);

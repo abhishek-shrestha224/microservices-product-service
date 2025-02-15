@@ -2,10 +2,10 @@ package world.hello.product.service;
 
 import java.util.List;
 import world.hello.product.domain.dto.Product;
-import world.hello.product.domain.dto.ProductCreateDto;
+import world.hello.product.domain.dto.ProductData;
 
 public interface ProductService {
-  Product createProduct(ProductCreateDto productCreateDto);
+  Product createProduct(ProductData productCreateDto);
 
   List<Product> fetchAllProducts();
 

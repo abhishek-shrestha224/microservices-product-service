@@ -6,7 +6,7 @@ import lombok.Builder;
 import world.hello.product.domain.enums.Category;
 
 @Builder
-public record ProductCreateDto(
+public record ProductData(
     @NotBlank(message = "Product name must not be blank")
         @Size(min = 3, max = 255, message = "Product name must be between 3 and 255 characters")
         String name,

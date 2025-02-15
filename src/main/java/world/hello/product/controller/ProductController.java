@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import world.hello.product.domain.dto.Product;
-import world.hello.product.domain.dto.ProductCreateDto;
+import world.hello.product.domain.dto.ProductData;
 import world.hello.product.service.ProductService;
 
 @RestController
@@ -27,7 +27,7 @@ public class ProductController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Product createProduct(@RequestBody @Valid ProductCreateDto createDto) {
+  public Product createProduct(@RequestBody @Valid ProductData createDto) {
     log.info("Product create data: {}", createDto);
     if (createDto.name().equals("abcd")) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are a teapot");
