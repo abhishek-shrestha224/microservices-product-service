@@ -3,6 +3,7 @@ package world.hello.product.service;
 import java.util.List;
 import world.hello.product.domain.dto.Product;
 import world.hello.product.domain.dto.ProductData;
+import world.hello.product.domain.dto.ProductUpdateData;
 
 public interface ProductService {
   Product createProduct(ProductData productCreateDto);
@@ -11,5 +12,5 @@ public interface ProductService {
 
   Product fetchProductById(String id);
 
-  Product updateProductById(String id, Product productUpdate);
+  Product updateProductById(String id, ProductUpdateData productUpdate);
 }

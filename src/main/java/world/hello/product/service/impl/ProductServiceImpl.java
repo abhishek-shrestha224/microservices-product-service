@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import world.hello.product.domain.dto.Product;
 import world.hello.product.domain.dto.ProductData;
+import world.hello.product.domain.dto.ProductUpdateData;
 import world.hello.product.domain.model.ProductModel;
 import world.hello.product.exception.GenericException;
 import world.hello.product.repository.ProductRepository;
@@ -93,35 +94,21 @@ public class ProductServiceImpl implements ProductService {
     }
   }
 
-    @Override
-    public Product updateProductById(String id, Product productUpdate) {
-      log.info("Updating product with id: {}", id);
-      if (productUpdate == null
-          || (productUpdate.name() == null
-              && productUpdate.category() == null
-              && productUpdate.price() == null)) {
-        log.warn("No data to update");
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No data to update");
-      }
-      ProductModel existingProduct =
-          productRepository
-              .findById(id)
-              .orElseThrow(
-                  () ->
-                      new ResponseStatusException(
-                          HttpStatus.NOT_FOUND, "Product with id " + id + " not found"));
-      log.info("Product found: {}", existingProduct);
-      if (productUpdate.name() != null) {
-        existingProduct.setName(productUpdate.name());
-      }
-      if (productUpdate.category() != null) {
-        existingProduct.setCategory(productUpdate.category());
-      }
-      if (productUpdate.price() != null) {
-        existingProduct.setPrice(productUpdate.price());
-      }
-      log.info("Updated product: {}", existingProduct);
+  @Override
+  public Product updateProductById(String id, ProductUpdateData productUpdate) {
+    log.info("Updating product with id: {}", id);
 
-      return null;
-    }
+    ProductModel existingProduct =
+        productRepository
+            .findById(id)
+            .orElseThrow(
+                () ->
+                    new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Product with id " + id + " not found"));
+    log.info("Product found: {}", existingProduct);
+
+    log.info("Updated product: {}", existingProduct);
+
+    return productMapper.toDto(productRepository.save(existingProduct));
+  }
 }
