@@ -2,6 +2,8 @@ package world.hello.product.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,17 +16,22 @@ import world.hello.product.exception.GenericException;
 import world.hello.product.repository.ProductRepository;
 import world.hello.product.service.ProductService;
 import world.hello.product.utils.ProductMapper;
+import world.hello.product.utils.ProductValidator;
 
 @Service
 @Slf4j
 public class ProductServiceImpl implements ProductService {
   private final ProductRepository productRepository;
   private final ProductMapper productMapper;
+  private final ProductValidator productValidator;
 
   public ProductServiceImpl(
-      final ProductRepository productRepository, final ProductMapper productMapper) {
+      final ProductRepository productRepository,
+      final ProductMapper productMapper,
+      final ProductValidator productValidator) {
     this.productRepository = productRepository;
     this.productMapper = productMapper;
+    this.productValidator = productValidator;
   }
 
   @Override
@@ -49,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
     try {
       final List<ProductModel> products = productRepository.findAll();
       log.info("Found products: {}", products);
-      if (products.size() < 1) {
+      if (products.isEmpty()) {
         log.info("No products in database yet");
         return new ArrayList<Product>();
       }
@@ -69,8 +76,7 @@ public class ProductServiceImpl implements ProductService {
     try {
       log.info("Find product with id: {}", id);
 
-      if (!id.matches("^[a-fA-F0-9]{24}$")) {
-        log.warn("Invalid Id, does not match MonngoDB object id constraint");
+      if (!productValidator.isMongoId(id)) {
         throw new GenericException(HttpStatus.BAD_REQUEST, "Invalid product ID format");
       }
 
@@ -97,7 +103,13 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public Product updateProductById(String id, ProductUpdateData productUpdate) {
     log.info("Updating product with id: {}", id);
+    if (!productValidator.isMongoId(id)) {
+      throw new GenericException(HttpStatus.BAD_REQUEST, "Invalid product ID format");
+    }
 
+    if (!productValidator.hasAtLeastOneField(productUpdate)) {
+      throw new GenericException(HttpStatus.BAD_REQUEST, "Must have at least one field.");
+    }
     ProductModel existingProduct =
         productRepository
             .findById(id)
@@ -106,6 +118,10 @@ public class ProductServiceImpl implements ProductService {
                     new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Product with id " + id + " not found"));
     log.info("Product found: {}", existingProduct);
+
+    existingProduct.setName(productUpdate.name().orElse(existingProduct.getName()));
+    existingProduct.setCategory(productUpdate.category().orElse(existingProduct.getCategory()));
+    existingProduct.setPrice(productUpdate.price().orElse(existingProduct.getPrice()));
 
     log.info("Updated product: {}", existingProduct);
 
