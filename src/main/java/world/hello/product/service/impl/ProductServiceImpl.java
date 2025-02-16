@@ -105,11 +105,11 @@ public class ProductServiceImpl implements ProductService {
     try {
       log.info("Updating product with id: {}", id);
       if (!productValidator.isMongoId(id)) {
-        throw new GenericException(HttpStatus.BAD_REQUEST, "Invalid product ID format");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid product ID format");
       }
 
       if (!productValidator.hasAtLeastOneField(productUpdate)) {
-        throw new GenericException(HttpStatus.BAD_REQUEST, "Must have at least one field.");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Must have at least one field.");
       }
       ProductModel existingProduct =
           productRepository

@@ -1,0 +1,17 @@
+meta {
+  name: update-product-by-id
+  type: http
+  seq: 5
+}
+
+patch {
+  url: http://localhost:8081/api/v1/products/67b0ec0823fb912684bf6979
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "category": "KIDS"
+  }
+}
