@@ -142,9 +142,12 @@ public class ProductServiceImpl implements ProductService {
     try {
       log.info("Deleting product with id: {}", id);
       if (!productValidator.isMongoId(id)) {
-        throw new GenericException(HttpStatus.BAD_REQUEST, "Invalid product ID format");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid product ID format");
       }
       productRepository.deleteById(id);
+    } catch (ResponseStatusException ex) {
+      log.error(ex.getMessage());
+      throw ex;
     } catch (Exception ex) {
       log.error(ex.getMessage());
       throw new ResponseStatusException(
