@@ -102,29 +102,53 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public Product updateProductById(String id, ProductUpdateData productUpdate) {
-    log.info("Updating product with id: {}", id);
-    if (!productValidator.isMongoId(id)) {
-      throw new GenericException(HttpStatus.BAD_REQUEST, "Invalid product ID format");
+    try {
+      log.info("Updating product with id: {}", id);
+      if (!productValidator.isMongoId(id)) {
+        throw new GenericException(HttpStatus.BAD_REQUEST, "Invalid product ID format");
+      }
+
+      if (!productValidator.hasAtLeastOneField(productUpdate)) {
+        throw new GenericException(HttpStatus.BAD_REQUEST, "Must have at least one field.");
+      }
+      ProductModel existingProduct =
+          productRepository
+              .findById(id)
+              .orElseThrow(
+                  () ->
+                      new ResponseStatusException(
+                          HttpStatus.NOT_FOUND, "Product with id " + id + " not found"));
+      log.info("Product found: {}", existingProduct);
+
+      existingProduct.setName(productUpdate.name().orElse(existingProduct.getName()));
+      existingProduct.setCategory(productUpdate.category().orElse(existingProduct.getCategory()));
+      existingProduct.setPrice(productUpdate.price().orElse(existingProduct.getPrice()));
+
+      log.info("Updated product: {}", existingProduct);
+
+      return productMapper.toDto(productRepository.save(existingProduct));
+    } catch (ResponseStatusException ex) {
+      log.error(ex.getMessage());
+      throw ex;
+    } catch (Exception ex) {
+      log.error(ex.getMessage());
+      throw new ResponseStatusException(
+          HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update product by id: " + id);
     }
+  }
 
-    if (!productValidator.hasAtLeastOneField(productUpdate)) {
-      throw new GenericException(HttpStatus.BAD_REQUEST, "Must have at least one field.");
+  @Override
+  public void deleteProdcutById(String id) {
+    try {
+      log.info("Deleting product with id: {}", id);
+      if (!productValidator.isMongoId(id)) {
+        throw new GenericException(HttpStatus.BAD_REQUEST, "Invalid product ID format");
+      }
+      productRepository.deleteById(id);
+    } catch (Exception ex) {
+      log.error(ex.getMessage());
+      throw new ResponseStatusException(
+          HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete product by id: " + id);
     }
-    ProductModel existingProduct =
-        productRepository
-            .findById(id)
-            .orElseThrow(
-                () ->
-                    new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Product with id " + id + " not found"));
-    log.info("Product found: {}", existingProduct);
-
-    existingProduct.setName(productUpdate.name().orElse(existingProduct.getName()));
-    existingProduct.setCategory(productUpdate.category().orElse(existingProduct.getCategory()));
-    existingProduct.setPrice(productUpdate.price().orElse(existingProduct.getPrice()));
-
-    log.info("Updated product: {}", existingProduct);
-
-    return productMapper.toDto(productRepository.save(existingProduct));
   }
 }
