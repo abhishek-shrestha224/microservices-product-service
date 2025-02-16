@@ -69,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
       log.info("Find product with id: {}", id);
 
       if (!id.matches("^[a-fA-F0-9]{24}$")) {
-        log.warn("Invalid Id, doesnot match MonngoDB object id constraint");
+        log.warn("Invalid Id, does not match MonngoDB object id constraint");
         throw new GenericException(HttpStatus.BAD_REQUEST, "Invalid product ID format");
       }
 
@@ -92,4 +92,36 @@ public class ProductServiceImpl implements ProductService {
           HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch product by id: " + id);
     }
   }
+
+    @Override
+    public Product updateProductById(String id, Product productUpdate) {
+      log.info("Updating product with id: {}", id);
+      if (productUpdate == null
+          || (productUpdate.name() == null
+              && productUpdate.category() == null
+              && productUpdate.price() == null)) {
+        log.warn("No data to update");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No data to update");
+      }
+      ProductModel existingProduct =
+          productRepository
+              .findById(id)
+              .orElseThrow(
+                  () ->
+                      new ResponseStatusException(
+                          HttpStatus.NOT_FOUND, "Product with id " + id + " not found"));
+      log.info("Product found: {}", existingProduct);
+      if (productUpdate.name() != null) {
+        existingProduct.setName(productUpdate.name());
+      }
+      if (productUpdate.category() != null) {
+        existingProduct.setCategory(productUpdate.category());
+      }
+      if (productUpdate.price() != null) {
+        existingProduct.setPrice(productUpdate.price());
+      }
+      log.info("Updated product: {}", existingProduct);
+
+      return null;
+    }
 }

@@ -10,4 +10,6 @@ public interface ProductService {
   List<Product> fetchAllProducts();
 
   Product fetchProductById(String id);
+
+  Product updateProductById(String id, Product productUpdate);
 }
