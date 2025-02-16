@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,19 +21,11 @@ import world.hello.product.utils.ProductValidator;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
   private final ProductRepository productRepository;
   private final ProductMapper productMapper;
   private final ProductValidator productValidator;
-
-  public ProductServiceImpl(
-      final ProductRepository productRepository,
-      final ProductMapper productMapper,
-      final ProductValidator productValidator) {
-    this.productRepository = productRepository;
-    this.productMapper = productMapper;
-    this.productValidator = productValidator;
-  }
 
   @Override
   public Product createProduct(ProductData productCreateDto) {
