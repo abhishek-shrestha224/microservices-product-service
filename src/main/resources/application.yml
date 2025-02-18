@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: product-ms
+  data:
+    mongodb:
+      uri: mongodb://${DB_USER:root}:${DB_SECRET:changeinprod}@${DB_HOST:localhost}:${DB_PORT:27017}/${DB_NAME:product_service}?authSource=${DB_AUTH:admin}
+
+server:
+  port: ${PORT:8081}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
